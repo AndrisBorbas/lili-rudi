@@ -5,27 +5,37 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
-export function SignIn() {
+type SignInProps = {
+	trigger?: React.ReactNode;
+	open?: boolean;
+	onOpenChange?: (open: boolean) => void;
+};
+
+export function SignIn({ trigger, open, onOpenChange }: SignInProps) {
 	const [loading, setLoading] = useState(false);
 
 	return (
-		<Card className="w-full max-w-md">
-			<CardHeader>
-				<CardTitle className="text-lg md:text-xl">Belépés</CardTitle>
-				<CardDescription className="text-xs md:text-sm">
-					Válassz egy bejelentkezési módot
-				</CardDescription>
-			</CardHeader>
-			<CardContent>
-				<div className="grid gap-4">
+		<Dialog open={open} onOpenChange={onOpenChange}>
+			{trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
+			<DialogContent className="glass-hq glass-shadow sm:max-w-md">
+				<DialogHeader>
+					<DialogTitle className="text-primary text-lg md:text-xl">
+						Belépés
+					</DialogTitle>
+					<DialogDescription className="text-xs md:text-sm">
+						Válassz egy bejelentkezési módot
+					</DialogDescription>
+				</DialogHeader>
+				<div className="text-primary grid gap-4">
 					<div
 						className={cn(
 							"flex w-full items-center gap-2",
@@ -90,7 +100,7 @@ export function SignIn() {
 						</Button>
 					</div>
 				</div>
-			</CardContent>
-		</Card>
+			</DialogContent>
+		</Dialog>
 	);
 }

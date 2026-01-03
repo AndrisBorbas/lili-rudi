@@ -52,7 +52,7 @@
 }
 
 :root {
-  --radius: 0;
+  --radius: 0.25rem;
   --background: oklch(95.087% 0.0751 159.38);
   --foreground: oklch(0.147 0.004 49.25);
   --card: oklch(1 0 0);
@@ -127,4 +127,55 @@
   body {
     @apply bg-background text-foreground;
   }
+
+	body {
+		@apply text-foreground bg-background relative flex min-h-screen flex-col antialiased;
+	}
+
+	h1 {
+		@apply scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance;
+	}
+	h2 {
+		@apply scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0;
+	}
+	h3 {
+		@apply scroll-m-20 text-2xl font-semibold tracking-tight;
+	}
+	h4 {
+		@apply scroll-m-20 text-xl font-semibold tracking-tight;
+	}
+	h5 {
+		@apply scroll-m-20 text-lg;
+	}
+	h6 {
+		@apply scroll-m-20 text-base;
+	}
+
+	p {
+		@apply leading-7;
+	}
+	blockquote {
+		@apply mt-6 border-l-2 pl-6 italic;
+	}
+	code {
+		@apply bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold;
+	}
+}
+
+@layer components {
+	.glass-transparent {
+		@apply border-slate-300/50 bg-transparent backdrop-blur-md dark:border-slate-700/50 dark:bg-transparent;
+	}
+	.glass {
+		@apply border-slate-300/50 bg-stone-100/50 backdrop-blur-md dark:border-slate-700/50 dark:bg-stone-900/50;
+	}
+	.glass-hq {
+		@apply border-slate-300/50 bg-stone-100/50 overflow-hidden before:pointer-events-none before:absolute before:inset-0 before:-z-20 before:h-[200%] before:mask-b-from-black before:mask-b-from-50% before:mask-b-to-transparent before:mask-b-to-50% before:saturate-150 before:backdrop-blur-md dark:border-slate-700/50 dark:bg-stone-900/50;
+	}
+	.glass-hoverable {
+		@apply transition-all duration-200 ease-in-out hover:border-slate-300/70 hover:bg-stone-100/60 hover:backdrop-blur-md focus-visible:border-slate-300/70 focus-visible:bg-stone-100/60 focus-visible:backdrop-blur-md dark:hover:border-slate-600/50 dark:hover:bg-gray-900/40 dark:focus-visible:border-slate-600/50 dark:focus-visible:bg-gray-900/40;
+	}
+	.glass-shadow {
+		@apply shadow-sm shadow-slate-950/20 dark:shadow-slate-50/20;
+	}
 }
