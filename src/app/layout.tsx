@@ -10,7 +10,10 @@ export const metadata: Metadata = {
 	icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-const nunitoSans = Nunito_Sans({ variable: "--font-sans" });
+const nunitoSans = Nunito_Sans({
+	variable: "--font-sans",
+	subsets: ["latin", "latin-ext"],
+});
 
 export default async function RootLayout({
 	children,
