@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 
 import { type Metadata } from "next";
-import { Nunito_Sans, Parisienne } from "next/font/google";
+import { Dancing_Script, Nunito_Sans } from "next/font/google";
 
 export const metadata: Metadata = {
 	title: "Lili & Rudi",
@@ -14,7 +14,7 @@ const nunitoSans = Nunito_Sans({
 	subsets: ["latin", "latin-ext"],
 });
 
-const parisienne = Parisienne({
+const dancingScript = Dancing_Script({
 	weight: "400",
 	variable: "--font-fancy",
 	subsets: ["latin", "latin-ext"],
@@ -26,7 +26,7 @@ export default async function RootLayout({
 	return (
 		<html
 			lang="hu"
-			className={`${nunitoSans.variable} ${parisienne.variable} antialiased`}
+			className={`${nunitoSans.variable} ${dancingScript.variable} antialiased`}
 		>
 			<body className="min-h-screen">
 				<div className="pointer-events-none fixed inset-0 -z-2">
