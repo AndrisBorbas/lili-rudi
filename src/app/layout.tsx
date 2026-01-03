@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 
 import { type Metadata } from "next";
-import { Dancing_Script, Nunito_Sans } from "next/font/google";
+import { BenchNine, Dancing_Script } from "next/font/google";
 
 export const metadata: Metadata = {
 	title: "Lili & Rudi",
@@ -9,7 +9,8 @@ export const metadata: Metadata = {
 	icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-const nunitoSans = Nunito_Sans({
+const benchNine = BenchNine({
+	weight: "400",
 	variable: "--font-sans",
 	subsets: ["latin", "latin-ext"],
 });
@@ -26,7 +27,7 @@ export default async function RootLayout({
 	return (
 		<html
 			lang="hu"
-			className={`${nunitoSans.variable} ${dancingScript.variable} antialiased`}
+			className={`${benchNine.variable} ${dancingScript.variable} antialiased`}
 		>
 			<body className="min-h-screen">
 				<div className="pointer-events-none fixed inset-0 -z-2">

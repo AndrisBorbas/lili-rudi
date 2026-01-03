@@ -10,13 +10,13 @@ export default function HomePage() {
 			<h1 className="animate-fade-in-up relative text-6xl font-extrabold tracking-tight text-white opacity-0 sm:text-[5rem]">
 				Lili & Rudi
 				<span className="text-background/90 -z-10 w-full border-0 text-7xl transform-3d">
-					<span className="animate-fade-in-zoom absolute -top-16 -left-8 -z-10 -rotate-12 opacity-0 delay-500">
+					<span className="animate-fade-in-zoom absolute -top-18 -left-16 -z-10 -rotate-12 opacity-0 delay-500">
 						2026.
 					</span>
-					<span className="animate-fade-in-zoom absolute top-20 left-4 -z-10 rotate-12 opacity-0 delay-700">
+					<span className="animate-fade-in-zoom absolute top-22 left-0 -z-10 rotate-12 opacity-0 delay-700">
 						08.
 					</span>
-					<span className="animate-fade-in-zoom absolute top-24 right-8 -z-10 -rotate-12 opacity-0 delay-1000">
+					<span className="animate-fade-in-zoom absolute top-24 -right-4 -z-10 -rotate-12 opacity-0 delay-1000">
 						14.
 					</span>
 				</span>
