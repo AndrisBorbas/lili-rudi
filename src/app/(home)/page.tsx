@@ -19,7 +19,7 @@ export default function HomePage() {
 					Lili
 				</span>
 				<br />
-				<span className="animate-fade-in-zoom animation-duration-[2s] relative inline-block opacity-0 [animation-delay:1500ms]">
+				<span className="animate-fade-in-zoom animation-duration-[2s] relative inline-block -translate-y-2 opacity-0 [animation-delay:1500ms]">
 					+
 				</span>
 				<br />
