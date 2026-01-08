@@ -20,7 +20,7 @@ export default function HomePage() {
 				</span>
 				<br />
 				<span className="animate-fade-in-zoom animation-duration-[2s] relative inline-block opacity-0 [animation-delay:1500ms]">
-					&
+					+
 				</span>
 				<br />
 				<span className="animate-fade-in-left animation-duration-[2s] relative ml-18 inline-block opacity-0 [animation-delay:1200ms] sm:ml-22">

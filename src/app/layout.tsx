@@ -7,7 +7,7 @@ import { AnimationProvider } from "@/components/layouts/animation-provider";
 import { Background } from "@/components/layouts/bg";
 
 export const metadata: Metadata = {
-	title: "Lili & Rudi",
+	title: "Lili + Rudi",
 	description: "Lili és Rudi esküvői oldala",
 	icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
@@ -39,7 +39,7 @@ export default async function RootLayout({
 							<div className="absolute inset-0 -z-2 size-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_90%,--alpha(var(--color-yellow-500)/5%)_40%,--alpha(var(--color-yellow-200)/30%)_90%)]" />
 						</div>
 					</div> */}
-					<Background />
+					{/* <Background /> */}
 					{children}
 				</AnimationProvider>
 			</body>
