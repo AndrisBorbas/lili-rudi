@@ -34,11 +34,11 @@ export default async function RootLayout({
 		>
 			<body className="min-h-screen">
 				<AnimationProvider>
-					<div className="pointer-events-none fixed inset-0 -z-2">
+					{/* <div className="pointer-events-none fixed inset-0 -z-2">
 						<div className="relative size-full">
 							<div className="absolute inset-0 -z-2 size-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_90%,--alpha(var(--color-yellow-500)/5%)_40%,--alpha(var(--color-yellow-200)/30%)_90%)]" />
 						</div>
-					</div>
+					</div> */}
 					<Background />
 					{children}
 				</AnimationProvider>
