@@ -11,6 +11,8 @@
 
 	--animate-fade-in-up: fadeInUp 0.7s ease-out forwards;
 	--animate-fade-in-zoom: fadeInZoom 0.7s ease-out forwards;
+	--animate-fade-in-right: fadeInRight 0.7s ease-out forwards;
+	--animate-fade-in-left: fadeInLeft 0.7s ease-out forwards;
 
 	@keyframes fadeInUp {
 		from {
@@ -31,6 +33,28 @@
 		to {
 			opacity: 1;
 			transform: scale(1);
+		}
+	}
+
+	@keyframes fadeInRight {
+		from {
+			opacity: 0;
+			transform: translateX(-200px);
+		}
+		to {
+			opacity: 1;
+			transform: translateX(0);
+		}
+	}
+
+	@keyframes fadeInLeft {
+		from {
+			opacity: 0;
+			transform: translateX(200px);
+		}
+		to {
+			opacity: 1;
+			transform: translateX(0);
 		}
 	}
 }
@@ -80,15 +104,15 @@
 
 :root {
 	--radius: 0.25rem;
-	--background: oklch(42.108% 0.03279 140.193);
+	--background: oklch(97.036% 0.04683 152.026);
 	--foreground: oklch(0.147 0.004 49.25);
 	--card: oklch(1 0 0);
 	--card-foreground: oklch(0.147 0.004 49.25);
 	--popover: oklch(1 0 0);
 	--popover-foreground: oklch(0.147 0.004 49.25);
-	--primary: oklch(0.6 0.13 163);
+	--primary: oklch(67.854% 0.08055 75.363);
 	--primary-foreground: oklch(0.98 0.02 166);
-	--secondary: oklch(0.967 0.001 286.375);
+	--secondary: oklch(70.801% 0.06375 76.257);
 	--secondary-foreground: oklch(0.21 0.006 285.885);
 	--muted: oklch(0.97 0.001 106.424);
 	--muted-foreground: oklch(0.553 0.013 58.071);
@@ -113,6 +137,7 @@
 	--sidebar-ring: oklch(0.709 0.01 56.259);
 }
 
+/*
 .dark {
 	--background: oklch(0.147 0.004 49.25);
 	--foreground: oklch(0.985 0.001 106.423);
@@ -146,6 +171,7 @@
 	--sidebar-border: oklch(1 0 0 / 10%);
 	--sidebar-ring: oklch(0.553 0.013 58.071);
 }
+*/
 
 @layer base {
 	* {

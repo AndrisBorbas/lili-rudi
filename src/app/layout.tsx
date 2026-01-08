@@ -3,6 +3,9 @@ import "@/styles/globals.css";
 import { type Metadata } from "next";
 import { BenchNine, Dancing_Script } from "next/font/google";
 
+import { AnimationProvider } from "@/components/layouts/animation-provider";
+import { Background } from "@/components/layouts/bg";
+
 export const metadata: Metadata = {
 	title: "Lili & Rudi",
 	description: "Lili és Rudi esküvői oldala",
@@ -30,12 +33,15 @@ export default async function RootLayout({
 			className={`${benchNine.variable} ${dancingScript.variable} antialiased`}
 		>
 			<body className="min-h-screen">
-				<div className="pointer-events-none fixed inset-0 -z-2">
-					<div className="relative size-full">
-						<div className="absolute inset-0 -z-2 size-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_90%,--alpha(var(--color-stone-500)/5%)_40%,--alpha(var(--color-stone-200)/30%)_90%)] dark:[background:radial-gradient(125%_125%_at_50%_10%,--alpha(var(--color-green-950)/5%)_40%,--alpha(var(--color-green-900)/40%)_100%)]" />
+				<AnimationProvider>
+					<div className="pointer-events-none fixed inset-0 -z-2">
+						<div className="relative size-full">
+							<div className="absolute inset-0 -z-2 size-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_90%,--alpha(var(--color-yellow-500)/5%)_40%,--alpha(var(--color-yellow-200)/30%)_90%)]" />
+						</div>
 					</div>
-				</div>
-				{children}
+					<Background />
+					{children}
+				</AnimationProvider>
 			</body>
 		</html>
 	);

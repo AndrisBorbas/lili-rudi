@@ -17,10 +17,12 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.0.0",
+    "@svgr/webpack": "^8.1.0",
     "@t3-oss/env-nextjs": "^0.12.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.562.0",
+    "motion": "^12.24.11",
     "next": "15",
     "next-auth": "^5.0.0-beta.30",
     "radix-ui": "^1.4.3",

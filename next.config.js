@@ -10,6 +10,35 @@ const config = {
 	eslint: {
 		ignoreDuringBuilds: true,
 	},
+	webpack: (config) => {
+		config.module.rules.push({
+			test: /\.svg$/i,
+			use: [
+				{
+					loader: "@svgr/webpack",
+					options: {
+						svgProps: {
+							fill: "none",
+							stroke: "currentColor",
+							strokeWidth: 2,
+						},
+						replaceAttrValues: {
+							fill: "stroke",
+						},
+					},
+				},
+			],
+		});
+		return config;
+	},
+	turbopack: {
+		rules: {
+			"*.svg": {
+				loaders: ["@svgr/webpack"],
+				as: "*.js",
+			},
+		},
+	},
 };
 
 export default config;

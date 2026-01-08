@@ -27,6 +27,11 @@ export const env = createEnv({
 	 */
 	client: {
 		// NEXT_PUBLIC_CLIENTVAR: z.string(),
+		NEXT_PUBLIC_NODE_ENV: z
+			.enum(["development", "test", "production"])
+			.default(
+				process.env.NODE_ENV === "production" ? "production" : "development",
+			),
 	},
 
 	/**
@@ -40,6 +45,7 @@ export const env = createEnv({
 		AUTH_FACEBOOK_ID: process.env.AUTH_FACEBOOK_ID,
 		AUTH_FACEBOOK_SECRET: process.env.AUTH_FACEBOOK_SECRET,
 		NODE_ENV: process.env.NODE_ENV,
+		NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV,
 	},
 	/**
 	 * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
