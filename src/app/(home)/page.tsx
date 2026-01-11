@@ -15,7 +15,7 @@ export default function HomePage() {
 			className="flex h-screen w-full flex-col items-center justify-center p-4"
 			key={animationKey}
 		>
-			<h1 className="font-fancy text-primary mt-8 text-center text-6xl font-normal tracking-tight sm:text-7xl">
+			<h1 className="font-fancy text-primary mt-8 text-center text-6xl font-normal tracking-normal sm:text-7xl">
 				<span className="animate-fade-in-right animation-duration-[2s] relative mr-18 inline-block opacity-0 [animation-delay:100ms] sm:mr-22">
 					Lili
 				</span>
