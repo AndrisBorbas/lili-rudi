@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 
 import { type Metadata } from "next";
-import { BenchNine, Dancing_Script } from "next/font/google";
+import { Alice, Herr_Von_Muellerhoff } from "next/font/google";
 
 import { AnimationProvider } from "@/components/layouts/animation-provider";
 import { Background } from "@/components/layouts/bg";
@@ -12,13 +12,13 @@ export const metadata: Metadata = {
 	icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-const benchNine = BenchNine({
+const sans = Alice({
 	weight: "400",
 	variable: "--font-sans",
 	subsets: ["latin", "latin-ext"],
 });
 
-const dancingScript = Dancing_Script({
+const dancingScript = Herr_Von_Muellerhoff({
 	weight: "400",
 	variable: "--font-fancy",
 	subsets: ["latin", "latin-ext"],
@@ -30,7 +30,7 @@ export default async function RootLayout({
 	return (
 		<html
 			lang="hu"
-			className={`${benchNine.variable} ${dancingScript.variable} antialiased`}
+			className={`${sans.variable} ${dancingScript.variable} antialiased`}
 		>
 			<body className="min-h-screen">
 				<AnimationProvider>
