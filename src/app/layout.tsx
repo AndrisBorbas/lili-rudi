@@ -1,10 +1,15 @@
 import "@/styles/globals.css";
 
 import { type Metadata } from "next";
-import { Alice, Herr_Von_Muellerhoff } from "next/font/google";
+import {
+	Alice,
+	Herr_Von_Muellerhoff,
+	Indie_Flower,
+	Ropa_Sans,
+} from "next/font/google";
+import { Toaster } from "sonner";
 
 import { AnimationProvider } from "@/components/layouts/animation-provider";
-import { Background } from "@/components/layouts/bg";
 
 export const metadata: Metadata = {
 	title: "Lili + Rudi",
@@ -12,15 +17,21 @@ export const metadata: Metadata = {
 	icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-const sans = Alice({
+const sans = Ropa_Sans({
 	weight: "400",
 	variable: "--font-sans",
 	subsets: ["latin", "latin-ext"],
 });
 
-const dancingScript = Herr_Von_Muellerhoff({
+const fancy = Herr_Von_Muellerhoff({
 	weight: "400",
 	variable: "--font-fancy",
+	subsets: ["latin", "latin-ext"],
+});
+
+const elegant = Indie_Flower({
+	weight: "400",
+	variable: "--font-elegant",
 	subsets: ["latin", "latin-ext"],
 });
 
@@ -30,18 +41,12 @@ export default async function RootLayout({
 	return (
 		<html
 			lang="hu"
-			className={`${sans.variable} ${dancingScript.variable} antialiased`}
+			data-scroll-behavior="smooth"
+			className={`${sans.variable} ${fancy.variable} ${elegant.variable} antialiased`}
 		>
 			<body className="min-h-screen">
-				<AnimationProvider>
-					{/* <div className="pointer-events-none fixed inset-0 -z-2">
-						<div className="relative size-full">
-							<div className="absolute inset-0 -z-2 size-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_90%,--alpha(var(--color-yellow-500)/5%)_40%,--alpha(var(--color-yellow-200)/30%)_90%)]" />
-						</div>
-					</div> */}
-					{/* <Background /> */}
-					{children}
-				</AnimationProvider>
+				<AnimationProvider>{children}</AnimationProvider>
+				<Toaster />
 			</body>
 		</html>
 	);

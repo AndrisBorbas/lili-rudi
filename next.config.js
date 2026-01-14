@@ -4,41 +4,43 @@
  */
 import "./src/env.js";
 
+import createMDX from "@next/mdx"
+
 /** @type {import("next").NextConfig} */
 const config = {
 	reactStrictMode: true,
-	eslint: {
-		ignoreDuringBuilds: true,
-	},
-	webpack: (config) => {
-		config.module.rules.push({
-			test: /\.svg$/i,
-			use: [
-				{
-					loader: "@svgr/webpack",
-					options: {
-						svgProps: {
-							fill: "none",
-							stroke: "currentColor",
-							strokeWidth: 2,
-						},
-						replaceAttrValues: {
-							fill: "stroke",
-						},
-					},
-				},
-			],
-		});
-		return config;
+	pageExtensions: ["mdx", "ts", "tsx"],
+	images: {
+		remotePatterns: [
+			{
+				hostname: "picsum.photos",
+			}
+		],
+		unoptimized: true,
 	},
 	turbopack: {
 		rules: {
 			"*.svg": {
-				loaders: ["@svgr/webpack"],
+				loaders: [
+					{
+						loader: "@svgr/webpack",
+						options: {
+							icon: true,
+						},
+					},
+				],
 				as: "*.js",
 			},
 		},
 	},
 };
 
-export default config;
+
+/** @type {import("@next/mdx").NextMDXOptions} */
+const mdxConfig = {
+	extension: /\.mdx?$/,
+};
+
+const withMDX = createMDX(mdxConfig);
+
+export default withMDX(config);

@@ -11,11 +11,11 @@ export default async function HomeLayout({
 	return (
 		<>
 			<SessionProvider>
-				{/* <Navbar isAuthenticated={!!session} /> */}
-				<main className="container flex h-full flex-col items-center justify-center self-center">
+				<Navbar isAuthenticated={!!session} />
+				<main className="flex h-full w-full flex-col items-center justify-center self-center">
 					{children}
 				</main>
-				{/* <Footer /> */}
+				<Footer />
 			</SessionProvider>
 		</>
 	);

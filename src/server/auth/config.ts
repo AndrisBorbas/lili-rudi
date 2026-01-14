@@ -2,7 +2,7 @@ import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import FacebookProvider from "next-auth/providers/facebook";
 import GoogleProvider from "next-auth/providers/google";
 
-// import { env } from "@/env";
+import { env } from "@/env";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -31,10 +31,11 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authConfig = {
+	secret: env.AUTH_SECRET,
 	providers: [
 		GoogleProvider({
-			// clientId: env.AUTH_GOOGLE_CLIENT_ID,
-			// clientSecret: env.AUTH_GOOGLE_CLIENT_SECRET,
+			clientId: env.AUTH_GOOGLE_ID,
+			clientSecret: env.AUTH_GOOGLE_SECRET,
 			// https://next-auth.js.org/providers/google
 			authorization: {
 				params: {
@@ -45,6 +46,8 @@ export const authConfig = {
 			},
 		}),
 		FacebookProvider({
+			clientId: env.AUTH_FACEBOOK_ID,
+			clientSecret: env.AUTH_FACEBOOK_SECRET,
 			authorization: {
 				params: {
 					scope: "public_profile",

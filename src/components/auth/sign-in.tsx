@@ -26,7 +26,7 @@ export function SignIn({ trigger, open, onOpenChange }: SignInProps) {
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			{trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-			<DialogContent className="glass-hq glass-shadow sm:max-w-md">
+			<DialogContent className="glass-hq glass-shadow fill-mode-both max-w-80 sm:max-w-md">
 				<DialogHeader>
 					<DialogTitle className="text-primary text-lg md:text-xl">
 						Belépés

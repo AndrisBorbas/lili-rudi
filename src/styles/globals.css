@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -7,7 +8,8 @@
 	--font-sans:
 		var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
 		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-	--font-fancy: var(--font-parisienne), cursive;
+	--font-fancy: var(--font-fancy), cursive;
+	--font-elegant: var(--font-elegant), cursive;
 
 	--animate-fade-in-up: fadeInUp 0.7s ease-out forwards;
 	--animate-fade-in-zoom: fadeInZoom 0.7s ease-out forwards;
@@ -103,7 +105,7 @@
 }
 
 :root {
-	--radius: 0.25rem;
+	--radius: 0.5rem;
 	--background: oklch(100% 0.00011 271.152);
 	--foreground: oklch(0.147 0.004 49.25);
 	--card: oklch(1 0 0);
@@ -177,25 +179,26 @@
 	* {
 		@apply border-border outline-ring/50;
 	}
-	body {
-		@apply bg-background text-foreground;
+
+	html {
+		@apply scroll-smooth;
 	}
 
 	body {
-		@apply text-foreground bg-background relative flex min-h-screen flex-col antialiased;
+		@apply text-foreground bg-background relative flex min-h-screen flex-col antialiased scroll-smooth font-sans;
 	}
 
 	h1 {
-		@apply scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance;
+		@apply scroll-m-20 text-center text-4xl tracking-tight text-balance font-elegant;
 	}
 	h2 {
-		@apply scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0;
+		@apply scroll-m-20 pb-4 text-3xl font-elegant tracking-tight first:mt-0;
 	}
 	h3 {
-		@apply scroll-m-20 text-2xl font-semibold tracking-tight;
+		@apply scroll-m-20 text-2xl font-elegant tracking-tight;
 	}
 	h4 {
-		@apply scroll-m-20 text-xl font-semibold tracking-tight;
+		@apply scroll-m-20 text-xl font-elegant tracking-tight;
 	}
 	h5 {
 		@apply scroll-m-20 text-lg;
