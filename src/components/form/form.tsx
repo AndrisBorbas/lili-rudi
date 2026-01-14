@@ -1,3 +1,5 @@
+/* eslint-disable react/no-children-prop */
+
 import { useForm, useStore } from "@tanstack/react-form";
 import { Plus, Trash2 } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -24,36 +26,33 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
-const formSchema = z
-	.object({
-		attendance: z.enum(["yes", "no"]),
+const attendeeSchema = z.object({
+	name: z.string().min(1, "Kérlek, adj meg egy nevet!"),
+	age: z
+		.number({ message: "Kérlek, érvényes számot adj meg!" })
+		.min(0, "Az életkor nem lehet negatív!")
+		.max(130, "Kérlek, ésszerű életkort adj meg!"),
+
+	allergy: z.string().optional(),
+	hasAllergy: z.boolean().optional(),
+});
+
+const formSchema = z.discriminatedUnion("attendance", [
+	z.object({
 		name: z.string().min(1, "Kérlek, add meg a neved!"),
-		comment: z.string().max(3600, "Maximum 3600 karakter lehet").optional(),
+		comment: z.string().max(3600, "Maximum 3600 karakter lehet"),
+		attendance: z.literal("yes"),
 		attendees: z
-			.array(
-				z.object({
-					name: z.string().min(1, "Kérlek, adj meg egy nevet!"),
-					age: z
-						.number("Kérlek, érvényes számot adj meg!")
-						.min(0, "Az életkor nem lehet negatív!")
-						.max(130, "Kérlek, ésszerű életkort adj meg!"),
-					allergy: z.string().optional(),
-				}),
-			)
-			.optional(),
-	})
-	.superRefine((data, ctx) => {
-		if (
-			data.attendance === "yes" &&
-			(!data.attendees || data.attendees.length === 0)
-		) {
-			ctx.addIssue({
-				code: "custom",
-				message: "Kérlek, adj meg legalább egy résztvevőt!",
-				path: ["attendees"],
-			});
-		}
-	});
+			.array(attendeeSchema)
+			.min(1, "Kérlek, adj meg legalább egy résztvevőt!"),
+	}),
+	z.object({
+		name: z.string().min(1, "Kérlek, add meg a neved!"),
+		comment: z.string().max(3600, "Maximum 3600 karakter lehet"),
+		attendance: z.literal("no"),
+		attendees: z.array(attendeeSchema),
+	}),
+]);
 
 export function ResponseForm() {
 	const session = useSession();
@@ -62,7 +61,7 @@ export function ResponseForm() {
 	const form = useForm({
 		defaultValues: {
 			name: loggedIn ? (session.data.user.name ?? "") : "",
-			attendance: "",
+			attendance: "" as "yes" | "no",
 			attendees: [] as {
 				name: string;
 				age: number | "";
@@ -76,6 +75,7 @@ export function ResponseForm() {
 		},
 		onSubmit: async ({ value }) => {
 			toast.success("A válaszod rögzítve lett. Köszönjük!");
+			console.log("Submitted value:", value);
 		},
 	});
 
@@ -127,7 +127,6 @@ export function ResponseForm() {
 						<FieldGroup className="gap-4">
 							<form.Field
 								name="name"
-								// eslint-disable-next-line react/no-children-prop
 								children={(field) => {
 									const isInvalid =
 										field.state.meta.isTouched && !field.state.meta.isValid;
@@ -156,7 +155,6 @@ export function ResponseForm() {
 
 							<form.Field
 								name="attendance"
-								// eslint-disable-next-line react/no-children-prop
 								children={(field) => {
 									const isInvalid =
 										field.state.meta.isTouched && !field.state.meta.isValid;
@@ -165,7 +163,9 @@ export function ResponseForm() {
 											<RadioGroup
 												name={field.name}
 												value={field.state.value}
-												onValueChange={field.handleChange}
+												onValueChange={(value) => {
+													field.handleChange(value as "yes" | "no");
+												}}
 												disabled={!loggedIn}
 											>
 												<Field
@@ -222,20 +222,19 @@ export function ResponseForm() {
 									<form.Field
 										name="attendees"
 										mode="array"
-										// eslint-disable-next-line react/no-children-prop
 										children={(field) => {
 											const isInvalid =
 												field.state.meta.isTouched && !field.state.meta.isValid;
 											return (
 												<div className="space-y-4">
 													{field.state.value.map((_, index) => (
+														// eslint-disable-next-line react-x/no-array-index-key
 														<Card key={index} className="p-4">
 															<div className="space-y-4">
 																<div className="flex items-start justify-between gap-4">
 																	<div className="flex-1 space-y-4">
 																		<form.Field
 																			name={`attendees[${index}].name`}
-																			// eslint-disable-next-line react/no-children-prop
 																			children={(subField) => {
 																				const subInvalid =
 																					subField.state.meta.isTouched &&
@@ -271,7 +270,6 @@ export function ResponseForm() {
 																		/>
 																		<form.Field
 																			name={`attendees[${index}].age`}
-																			// eslint-disable-next-line react/no-children-prop
 																			children={(subField) => {
 																				const subInvalid =
 																					subField.state.meta.isTouched &&
@@ -328,7 +326,6 @@ export function ResponseForm() {
 																</div>
 																<form.Field
 																	name={`attendees[${index}].hasAllergy`}
-																	// eslint-disable-next-line react/no-children-prop
 																	children={(subField) => (
 																		<>
 																			<Field orientation="horizontal">
@@ -360,7 +357,6 @@ export function ResponseForm() {
 																			{subField.state.value && (
 																				<form.Field
 																					name={`attendees[${index}].allergy`}
-																					// eslint-disable-next-line react/no-children-prop
 																					children={(allergyField) => {
 																						const allergyInvalid =
 																							allergyField.state.meta
@@ -445,7 +441,6 @@ export function ResponseForm() {
 					<FieldSet>
 						<form.Field
 							name="comment"
-							// eslint-disable-next-line react/no-children-prop
 							children={(field) => {
 								const isInvalid =
 									field.state.meta.isTouched && !field.state.meta.isValid;
