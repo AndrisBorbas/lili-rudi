@@ -10,6 +10,9 @@ import createMDX from "@next/mdx"
 const config = {
 	reactStrictMode: true,
 	pageExtensions: ["mdx", "ts", "tsx"],
+	typescript: {
+		ignoreBuildErrors: false,
+	},
 	images: {
 		remotePatterns: [
 			{
