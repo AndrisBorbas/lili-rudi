@@ -16,6 +16,9 @@ export const env = createEnv({
 		RESEND_API_KEY: z.string(),
 		// Application URL for magic links
 		APP_URL: z.string().url(),
+		// Admin credentials
+		ADMIN_USERNAME: z.string().min(3),
+		ADMIN_PASSWORD: z.string().min(8),
 		NODE_ENV: z
 			.enum(["development", "test", "production"])
 			.default("development"),
@@ -48,6 +51,8 @@ export const env = createEnv({
 		RESEND_API_KEY: process.env.RESEND_API_KEY,
 		NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
 		APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+		ADMIN_USERNAME: process.env.ADMIN_USERNAME,
+		ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
 		NODE_ENV: process.env.NODE_ENV,
 		NEXT_PUBLIC_NODE_ENV: process.env.NEXT_PUBLIC_NODE_ENV,
 	},

@@ -45,11 +45,11 @@ export async function POST(
 		// Validate the request body
 		const validatedData = requestSchema.parse(body);
 
-		// Store the response in R2
-		await storeResponse(validatedData.email, validatedData);
-
 		// Create a magic link token
 		const token = await createMagicLinkToken(validatedData.email);
+
+		// Store the response in R2 with the token
+		await storeResponse(validatedData.email, validatedData, token);
 
 		// Send the magic link email
 		await sendMagicLinkEmail(validatedData.email, token);

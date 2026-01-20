@@ -529,7 +529,7 @@ export function ResponseForm({
 																	</div>
 																</div>
 																<span className="flex items-center gap-2">
-																	<Checkbox disabled />
+																	<div className="border-primary size-3 rounded border" />
 																	<span>Van ételallergiája</span>
 																</span>
 															</div>

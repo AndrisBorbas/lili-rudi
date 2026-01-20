@@ -57,14 +57,16 @@ export default function EditPage() {
 	}
 
 	return (
-		<main className="flex min-h-screen flex-col items-center justify-center p-4">
+		<div className="w-full p-4">
 			<div className="mb-8 text-center">
 				<h1 className="mb-2 text-3xl font-bold">Válasz szerkesztése</h1>
 				<p className="text-muted-foreground">
 					Módosítsd a válaszod és küldd be újra.
 				</p>
 			</div>
-			<ResponseForm initialData={data} editToken={token} />
-		</main>
+			<div className="container mx-auto w-full">
+				<ResponseForm initialData={data} editToken={token} />
+			</div>
+		</div>
 	);
 }

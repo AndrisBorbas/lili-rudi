@@ -1,5 +1,7 @@
 import {
+	DeleteObjectCommand,
 	GetObjectCommand,
+	ListObjectsV2Command,
 	PutObjectCommand,
 	S3Client,
 } from "@aws-sdk/client-s3";
@@ -27,7 +29,11 @@ export function hashEmail(email: string): string {
 /**
  * Store a form response in R2
  */
-export async function storeResponse(email: string, data: unknown) {
+export async function storeResponse(
+	email: string,
+	data: unknown,
+	token?: string,
+) {
 	const key = `responses/${hashEmail(email)}.json`;
 
 	await r2Client.send(
@@ -37,6 +43,7 @@ export async function storeResponse(email: string, data: unknown) {
 			Body: JSON.stringify({
 				email,
 				data,
+				token,
 				updatedAt: new Date().toISOString(),
 			}),
 			ContentType: "application/json",
@@ -120,4 +127,80 @@ export async function getEmailFromToken(token: string): Promise<string | null> {
 		}
 		throw error;
 	}
+}
+
+/**
+ * List all form responses from R2
+ */
+export async function listAllResponses() {
+	try {
+		const response = await r2Client.send(
+			new ListObjectsV2Command({
+				Bucket: env.R2_BUCKET_NAME,
+				Prefix: "responses/",
+			}),
+		);
+
+		if (!response.Contents || response.Contents.length === 0) {
+			return [];
+		}
+
+		// Fetch all response objects
+		const responses = await Promise.all(
+			response.Contents.map(async (item) => {
+				if (!item.Key) return null;
+
+				try {
+					const obj = await r2Client.send(
+						new GetObjectCommand({
+							Bucket: env.R2_BUCKET_NAME,
+							Key: item.Key,
+						}),
+					);
+
+					const body = await obj.Body?.transformToString();
+					if (!body) return null;
+
+					return JSON.parse(body) as {
+						email: string;
+						data: unknown;
+						updatedAt: string;
+					};
+				} catch {
+					return null;
+				}
+			}),
+		);
+
+		// Filter out null values and return
+		return responses.filter((r) => r !== null);
+	} catch (error) {
+		console.error("Error listing responses:", error);
+		return [];
+	}
+}
+
+/**
+ * Get the existing token for an email address from the stored response
+ */
+export async function getTokenForEmail(email: string): Promise<string | null> {
+	const response = await getResponse(email);
+	if (!response) return null;
+
+	const data = response as { token?: string };
+	return data.token ?? null;
+}
+
+/**
+ * Delete a form response from R2
+ */
+export async function deleteResponse(email: string) {
+	const key = `responses/${hashEmail(email)}.json`;
+
+	await r2Client.send(
+		new DeleteObjectCommand({
+			Bucket: env.R2_BUCKET_NAME,
+			Key: key,
+		}),
+	);
 }
