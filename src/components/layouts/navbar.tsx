@@ -4,7 +4,6 @@ import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-import { SignIn } from "@/components/auth/sign-in";
 import { Button } from "@/components/ui/button";
 import {
 	Sheet,
@@ -15,10 +14,6 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
-type NavbarProps = {
-	isAuthenticated: boolean;
-};
-
 const NAV_ITEMS = [
 	{ label: "Történetünk", href: "/#tortenetunk" },
 	{ label: "Menetrend", href: "/#menetrend" },
@@ -28,7 +23,7 @@ const NAV_ITEMS = [
 	{ label: "Galéria", href: "/#galeria" },
 ];
 
-export function Navbar({ isAuthenticated }: NavbarProps) {
+export function Navbar() {
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
@@ -58,13 +53,6 @@ export function Navbar({ isAuthenticated }: NavbarProps) {
 							</Link>
 						</Button>
 					))}
-					{isAuthenticated ? (
-						<Button asChild variant="link">
-							<Link href="/logout">Kijelentkezés</Link>
-						</Button>
-					) : (
-						<SignIn trigger={<Button variant="link">Bejelentkezés</Button>} />
-					)}
 				</div>
 				<Sheet open={isOpen} onOpenChange={setIsOpen}>
 					<SheetTrigger asChild>
@@ -86,26 +74,6 @@ export function Navbar({ isAuthenticated }: NavbarProps) {
 							<SheetTitle>Navigáció</SheetTitle>
 						</SheetHeader>
 						<div className="flex flex-col gap-2 px-3 pb-2">
-							{isAuthenticated ? (
-								<Button
-									asChild
-									variant="link"
-									className="justify-start"
-									onClick={() => {
-										setIsOpen(false);
-									}}
-								>
-									<Link href="/logout">Kijelentkezés</Link>
-								</Button>
-							) : (
-								<SignIn
-									trigger={
-										<Button variant="link" className="justify-end">
-											Bejelentkezés
-										</Button>
-									}
-								/>
-							)}
 							{NAV_ITEMS.map((item) => (
 								<Button
 									asChild

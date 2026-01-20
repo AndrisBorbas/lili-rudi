@@ -2,12 +2,10 @@
 
 import { useForm, useStore } from "@tanstack/react-form";
 import { Plus, Trash2 } from "lucide-react";
-import { useSession } from "next-auth/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import * as z from "zod";
 
-import { SignIn } from "@/components/auth/sign-in";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -24,7 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
+import type { SubmitResponseSuccess } from "@/types/api";
 
 const attendeeSchema = z.object({
 	name: z.string().min(1, "Kérlek, adj meg egy nevet!"),
@@ -39,6 +37,7 @@ const attendeeSchema = z.object({
 
 const formSchema = z.discriminatedUnion("attendance", [
 	z.object({
+		email: z.email("Kérlek, érvényes email címet adj meg!"),
 		name: z.string().min(1, "Kérlek, add meg a neved!"),
 		comment: z.string().max(3600, "Maximum 3600 karakter lehet"),
 		attendance: z.literal("yes"),
@@ -47,6 +46,7 @@ const formSchema = z.discriminatedUnion("attendance", [
 			.min(1, "Kérlek, adj meg legalább egy résztvevőt!"),
 	}),
 	z.object({
+		email: z.email("Kérlek, érvényes email címet adj meg!"),
 		name: z.string().min(1, "Kérlek, add meg a neved!"),
 		comment: z.string().max(3600, "Maximum 3600 karakter lehet"),
 		attendance: z.literal("no"),
@@ -54,28 +54,68 @@ const formSchema = z.discriminatedUnion("attendance", [
 	}),
 ]);
 
-export function ResponseForm() {
-	const session = useSession();
-	const loggedIn = session.status === "authenticated";
+export function ResponseForm({
+	initialData,
+	editToken: _editToken,
+}: {
+	initialData?: {
+		email: string;
+		name: string;
+		attendance: "yes" | "no";
+		attendees: {
+			name: string;
+			age: number | "";
+			allergy?: string;
+			hasAllergy?: boolean;
+		}[];
+		comment: string;
+	};
+	editToken?: string;
+} = {}) {
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const form = useForm({
 		defaultValues: {
-			name: loggedIn ? (session.data.user.name ?? "") : "",
-			attendance: "" as "yes" | "no",
-			attendees: [] as {
-				name: string;
-				age: number | "";
-				allergy?: string;
-				hasAllergy?: boolean;
-			}[],
-			comment: "",
+			email: initialData?.email ?? "",
+			name: initialData?.name ?? "",
+			attendance: initialData?.attendance ?? ("" as "yes" | "no"),
+			attendees:
+				initialData?.attendees ??
+				([] as {
+					name: string;
+					age: number | "";
+					allergy?: string;
+					hasAllergy?: boolean;
+				}[]),
+			comment: initialData?.comment ?? "",
 		},
 		validators: {
 			onSubmit: formSchema,
 		},
 		onSubmit: async ({ value }) => {
-			toast.success("A válaszod rögzítve lett. Köszönjük!");
-			console.log("Submitted value:", value);
+			setIsSubmitting(true);
+			try {
+				const response = await fetch("/api/response", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(value),
+				});
+
+				const data = (await response.json()) as SubmitResponseSuccess;
+
+				if (response.ok) {
+					toast.success(data.message);
+				} else {
+					toast.error(data.message);
+				}
+			} catch (error) {
+				console.error("Error submitting form:", error);
+				toast.error("Hiba történt a válasz küldése során.");
+			} finally {
+				setIsSubmitting(false);
+			}
 		},
 	});
 
@@ -103,19 +143,10 @@ export function ResponseForm() {
 		}
 	}, [attendance, form]);
 
+	const showAttendees = attendance === "yes";
+
 	return (
-		<div className="w-full max-w-md">
-			{session.status === "unauthenticated" && (
-				<div className="flex justify-center px-4 pb-4">
-					<SignIn
-						trigger={
-							<Button variant="outline">
-								Kérlek jelentkezz be a válaszadáshoz
-							</Button>
-						}
-					/>
-				</div>
-			)}
+		<div className="w-full">
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
@@ -125,6 +156,38 @@ export function ResponseForm() {
 				<FieldGroup className="gap-4">
 					<FieldSet>
 						<FieldGroup className="gap-4">
+							<form.Field
+								name="email"
+								children={(field) => {
+									const isInvalid =
+										field.state.meta.isTouched && !field.state.meta.isValid;
+									return (
+										<Field data-invalid={isInvalid}>
+											<FieldLabel htmlFor={field.name}>Email</FieldLabel>
+											<Input
+												id={field.name}
+												name={field.name}
+												type="email"
+												value={field.state.value}
+												onBlur={field.handleBlur}
+												onChange={(e) => {
+													field.handleChange(e.target.value);
+												}}
+												aria-invalid={isInvalid}
+												placeholder="pelda@email.hu"
+											/>
+											<FieldDescription>
+												Erre az email címre küldünk egy linket, amivel
+												módosíthatod a válaszod.
+											</FieldDescription>
+											{isInvalid && (
+												<FieldError errors={field.state.meta.errors} />
+											)}
+										</Field>
+									);
+								}}
+							/>
+
 							<form.Field
 								name="name"
 								children={(field) => {
@@ -143,7 +206,6 @@ export function ResponseForm() {
 												}}
 												aria-invalid={isInvalid}
 												placeholder="Béta Béla"
-												disabled={!loggedIn}
 											/>
 											{isInvalid && (
 												<FieldError errors={field.state.meta.errors} />
@@ -155,6 +217,18 @@ export function ResponseForm() {
 
 							<form.Field
 								name="attendance"
+								validators={{
+									onSubmit: ({ value }) => {
+										// @ts-expect-error: value can be null
+										// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+										if (!value || value === "") {
+											return {
+												message: "Kérlek, válaszd ki, hogy tudsz-e jönni!",
+											};
+										}
+										return undefined;
+									},
+								}}
 								children={(field) => {
 									const isInvalid =
 										field.state.meta.isTouched && !field.state.meta.isValid;
@@ -166,7 +240,6 @@ export function ResponseForm() {
 												onValueChange={(value) => {
 													field.handleChange(value as "yes" | "no");
 												}}
-												disabled={!loggedIn}
 											>
 												<Field
 													orientation="horizontal"
@@ -210,14 +283,14 @@ export function ResponseForm() {
 							/>
 						</FieldGroup>
 					</FieldSet>
-					{attendance === "yes" && (
+					{showAttendees && (
 						<>
 							<FieldSeparator />
 							<FieldGroup>
-								<FieldSet className={cn()}>
+								<FieldSet className={"@container"}>
 									<FieldLegend>Résztvevők</FieldLegend>
 									<FieldDescription>
-										Írd be kik jönnek veled az eseményre.
+										Írd be kik jönnek veled együtt az eseményre.
 									</FieldDescription>
 									<form.Field
 										name="attendees"
@@ -226,10 +299,12 @@ export function ResponseForm() {
 											const isInvalid =
 												field.state.meta.isTouched && !field.state.meta.isValid;
 											return (
-												<div className="space-y-4">
+												<div
+													className="grid w-full grid-cols-1 justify-center justify-items-center gap-4 @sm:grid-cols-[repeat(auto-fill,360px)]"
+													style={{ gridAutoRows: "max-content" }}
+												>
 													{field.state.value.map((_, index) => (
-														// eslint-disable-next-line react-x/no-array-index-key
-														<Card key={index} className="p-4">
+														<Card key={`${index}`} className="w-full p-4">
 															<div className="space-y-4">
 																<div className="flex items-start justify-between gap-4">
 																	<div className="flex-1 space-y-4">
@@ -313,13 +388,14 @@ export function ResponseForm() {
 																		type="button"
 																		variant="ghost"
 																		size="icon"
+																		disabled={field.state.value.length <= 1}
 																		onClick={() => {
 																			const current = field.state.value;
 																			field.handleChange(
 																				current.filter((_, i) => i !== index),
 																			);
 																		}}
-																		className="text-destructive hover:text-destructive shrink-0"
+																		className="text-destructive hover:text-destructive disabled:text-muted-foreground shrink-0"
 																	>
 																		<Trash2 className="h-4 w-4" />
 																	</Button>
@@ -411,25 +487,58 @@ export function ResponseForm() {
 													{isInvalid && (
 														<FieldError errors={field.state.meta.errors} />
 													)}
-													<Button
-														type="button"
-														variant="outline"
-														onClick={() => {
-															field.handleChange([
-																...field.state.value,
-																{
-																	name: "",
-																	age: "" as const,
-																	allergy: "",
-																	hasAllergy: false,
-																},
-															]);
-														}}
-														className="w-full"
-													>
-														<Plus className="mr-2 h-4 w-4" />
-														Résztvevő hozzáadása
-													</Button>
+													<Card className="relative h-full w-full rounded-xl">
+														<Button
+															type="button"
+															variant="ghost"
+															onClick={() => {
+																field.handleChange([
+																	...field.state.value,
+																	{
+																		name: "",
+																		age: "" as const,
+																		allergy: "",
+																		hasAllergy: false,
+																	},
+																]);
+															}}
+															className="border-muted-foreground/50 size-full rounded-xl border-2 border-dashed p-4"
+														>
+															<div className="w-full space-y-4 text-left">
+																<div className="flex items-start justify-between gap-4">
+																	<div className="flex-1 space-y-4">
+																		<div className="flex-1 space-y-2">
+																			<div>Név</div>
+																			<Input
+																				disabled
+																				placeholder="Név"
+																				className="w-full"
+																			/>
+																		</div>
+																		<div className="flex-1 space-y-2">
+																			<div>Életkor</div>
+																			<Input
+																				disabled
+																				placeholder="Életkor"
+																				className="w-full"
+																			/>
+																		</div>
+																	</div>
+																	<div className="inline-flex size-10 items-center justify-center">
+																		<Trash2 className="text-destructive h-4 w-4" />
+																	</div>
+																</div>
+																<span className="flex items-center gap-2">
+																	<Checkbox disabled />
+																	<span>Van ételallergiája</span>
+																</span>
+															</div>
+															<Card className="glass absolute inset-1 flex items-center justify-center bg-transparent backdrop-blur-[2px]">
+																<Plus className="mr-2 h-4 w-4" />
+																Résztvevő hozzáadása
+															</Card>
+														</Button>
+													</Card>
 												</div>
 											);
 										}}
@@ -460,7 +569,6 @@ export function ResponseForm() {
 											autoComplete="off"
 											maxLength={3600}
 											className="resize-vertical"
-											disabled={!loggedIn}
 										/>
 										{isInvalid && (
 											<FieldError errors={field.state.meta.errors} />
@@ -471,8 +579,8 @@ export function ResponseForm() {
 						/>
 					</FieldSet>
 					<Field orientation="horizontal">
-						<Button type="submit" disabled={!loggedIn} className="ml-auto">
-							Beküldés
+						<Button type="submit" disabled={isSubmitting} className="ml-auto">
+							{isSubmitting ? "Küldés..." : "Beküldés"}
 						</Button>
 					</Field>
 				</FieldGroup>

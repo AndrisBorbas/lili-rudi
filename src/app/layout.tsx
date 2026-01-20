@@ -2,13 +2,13 @@ import "@/styles/globals.css";
 
 import { type Metadata } from "next";
 import {
-	Alice,
 	Herr_Von_Muellerhoff,
 	Indie_Flower,
 	Ropa_Sans,
 } from "next/font/google";
 import { Toaster } from "sonner";
 
+import { AnalyticsProvider } from "@/components/layouts/analytics-provider";
 import { AnimationProvider } from "@/components/layouts/animation-provider";
 
 export const metadata: Metadata = {
@@ -45,6 +45,7 @@ export default async function RootLayout({
 			className={`${sans.variable} ${fancy.variable} ${elegant.variable} antialiased`}
 		>
 			<body className="min-h-screen">
+				<AnalyticsProvider />
 				<AnimationProvider>{children}</AnimationProvider>
 				<Toaster />
 			</body>

@@ -11,6 +11,8 @@
 	--font-fancy: var(--font-fancy), cursive;
 	--font-elegant: var(--font-elegant), cursive;
 
+	--breakpoint-xs: 32rem;
+
 	--animate-fade-in-up: fadeInUp 0.7s ease-out forwards;
 	--animate-fade-in-zoom: fadeInZoom 0.7s ease-out forwards;
 	--animate-fade-in-right: fadeInRight 0.7s ease-out forwards;

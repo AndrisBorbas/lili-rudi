@@ -1,3 +1,5 @@
+"use client";
+
 import Head from "next/head";
 
 import { Container } from "@/components/layouts/container";
@@ -24,6 +26,7 @@ export function MapLayout() {
 					allowFullScreen
 					loading="lazy"
 					referrerPolicy="no-referrer-when-downgrade"
+					suppressHydrationWarning
 				/>
 			</div>
 		</Container>
