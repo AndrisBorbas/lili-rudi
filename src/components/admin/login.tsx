@@ -64,7 +64,7 @@ export function AdminLogin({ onLogin, error }: AdminLoginProps) {
 
 					{error && (
 						<Field data-invalid>
-							<FieldError errors={[error]} />
+							<FieldError errors={[{ message: error }]} />
 						</Field>
 					)}
 
