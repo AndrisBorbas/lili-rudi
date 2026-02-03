@@ -6,7 +6,7 @@ export const TRACKING_ID = "E0UJhqbJEXUU";
 export function useSwetrix(
 	pid: string = TRACKING_ID,
 	initOptions: Swetrix.LibOptions = {
-		apiURL: "https://succ.andrisborbas.com/log",
+		apiURL: "https://succ.andrisborbas.com/backend/log",
 	},
 	pageViewsOptions: Swetrix.PageViewsOptions = {},
 	errorOptions: Swetrix.ErrorOptions = {},

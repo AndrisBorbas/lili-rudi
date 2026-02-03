@@ -42,6 +42,9 @@ const config = {
 /** @type {import("@next/mdx").NextMDXOptions} */
 const mdxConfig = {
 	extension: /\.mdx?$/,
+	options: {
+		remarkPlugins: ["remark-gfm"],
+	}
 };
 
 const withMDX = createMDX(mdxConfig);
