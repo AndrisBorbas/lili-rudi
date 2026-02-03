@@ -2,6 +2,7 @@
 
 import { useForm, useStore } from "@tanstack/react-form";
 import { Plus, Trash2 } from "lucide-react";
+import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -22,6 +23,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
+import { env } from "@/env";
+import { TRACKING_ID } from "@/lib/track";
 import type { SubmitResponseSuccess } from "@/types/api";
 
 const attendeeSchema = z.object({
@@ -73,6 +76,9 @@ export function ResponseForm({
 	editToken?: string;
 } = {}) {
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const captchaContainerRef = useRef<HTMLDivElement>(null);
+	const captchaInputName = "swetrix-captcha-response";
+	const captchaProjectId = TRACKING_ID;
 
 	const form = useForm({
 		defaultValues: {
@@ -95,12 +101,25 @@ export function ResponseForm({
 		onSubmit: async ({ value }) => {
 			setIsSubmitting(true);
 			try {
+				const captchaToken =
+					captchaContainerRef.current?.querySelector<HTMLInputElement>(
+						`input[name="${captchaInputName}"]`,
+					)?.value ?? "";
+
+				if (!captchaToken) {
+					toast.error("Kérlek, erősítsd meg, hogy nem vagy robot.");
+					return;
+				}
+
 				const response = await fetch("/api/response", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 					},
-					body: JSON.stringify(value),
+					body: JSON.stringify({
+						...value,
+						captchaToken,
+					}),
 				});
 
 				const data = (await response.json()) as SubmitResponseSuccess;
@@ -147,6 +166,14 @@ export function ResponseForm({
 
 	return (
 		<div className="w-full">
+			<Script
+				src="https://cdn.swetrixcaptcha.com/captcha-loader.js"
+				onLoad={() => {
+					// @ts-expect-error: swetrixCaptchaForceLoad is defined in the loaded script
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+					window.swetrixCaptchaForceLoad();
+				}}
+			/>
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
@@ -576,6 +603,18 @@ export function ResponseForm({
 									</Field>
 								);
 							}}
+						/>
+					</FieldSet>
+					<FieldSet className="gap-3">
+						<FieldLabel htmlFor="captcha">Biztonsági ellenőrzés</FieldLabel>
+						<div
+							ref={captchaContainerRef}
+							id="captcha"
+							className="swecaptcha h-[66px] w-[302px]"
+							data-theme="light"
+							data-project-id={captchaProjectId}
+							data-response-input-name={captchaInputName}
+							data-api-url="https://succ.andrisborbas.com/backend/v1/captcha"
 						/>
 					</FieldSet>
 					<Field orientation="horizontal">
