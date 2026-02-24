@@ -177,6 +177,10 @@
 }
 */
 
+@utility container {
+	@apply max-w-6xl;
+}
+
 @layer base {
 	* {
 		@apply border-border outline-ring/50;
