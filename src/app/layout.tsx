@@ -14,7 +14,7 @@ import { AnimationProvider } from "@/components/layouts/animation-provider";
 export const metadata: Metadata = {
 	title: "Lili + Rudi",
 	description: "Lili és Rudi esküvői oldala",
-	icons: [{ rel: "icon", url: "/favicon.ico" }],
+	icons: [{ rel: "icon", url: "/favicon.png" }],
 };
 
 const sans = Ropa_Sans({

@@ -26,7 +26,7 @@ function ProgramCard({ time, title, icon, flipped }: ProgramCardProps) {
 				height={256}
 				alt={title}
 				className={cn(
-					"size-42 brightness-0 drop-shadow-sm drop-shadow-white invert-100 sm:size-64",
+					"size-42 brightness-0 invert-100 sm:size-64",
 					flipped ? "" : "ml-auto",
 				)}
 			/>
@@ -47,7 +47,7 @@ export function ProgramLayout() {
 				Menetrend
 			</h2>
 			<div className="relative ml-auto grid grid-cols-2 items-center">
-				<div className="absolute top-0 left-1/2 h-full w-[2px] drop-shadow-sm drop-shadow-white">
+				<div className="absolute top-0 left-1/2 h-full w-[2px]">
 					<svg
 						className="h-full w-full"
 						viewBox="0 0 2 100"

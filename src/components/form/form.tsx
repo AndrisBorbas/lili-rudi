@@ -317,7 +317,7 @@ export function ResponseForm({
 								<FieldSet className={"@container"}>
 									<FieldLegend>Résztvevők</FieldLegend>
 									<FieldDescription>
-										Írd be kik jönnek veled együtt az eseményre.
+										Írd be mely személyek jönnek veled együtt az eseményre.
 									</FieldDescription>
 									<form.Field
 										name="attendees"
@@ -454,7 +454,8 @@ export function ResponseForm({
 																					htmlFor={subField.name}
 																					className="font-normal"
 																				>
-																					Van ételallergiája
+																					Speciális étkezési igény
+																					(ételallergia, intolerancia)
 																				</FieldLabel>
 																			</Field>
 																			{subField.state.value && (
@@ -472,7 +473,8 @@ export function ResponseForm({
 																								<FieldLabel
 																									htmlFor={allergyField.name}
 																								>
-																									Allergia
+																									Allergiák, intoleranciák
+																									megnevezése
 																								</FieldLabel>
 																								<Input
 																									id={allergyField.name}

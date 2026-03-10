@@ -1,5 +1,6 @@
 "use client";
 
+import { Countdown } from "@/components/content/countdown";
 import { DetailsLayout } from "@/components/content/details";
 import { FormLayout } from "@/components/content/form";
 import { Gallery } from "@/components/content/gallery";
@@ -12,6 +13,7 @@ export default function HomePage() {
 	return (
 		<>
 			<Hero />
+			<Countdown />
 			<StoryLayout />
 			<ProgramLayout />
 			<DetailsLayout />
