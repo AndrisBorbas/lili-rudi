@@ -19,6 +19,13 @@ const attendeeSchema = z.object({
 	hasAllergy: z.boolean().optional(),
 });
 
+const attendeeNoValidationSchema = z.object({
+	name: z.string(),
+	age: z.union([z.number(), z.literal("")]),
+	allergy: z.string().optional(),
+	hasAllergy: z.boolean().optional(),
+});
+
 const baseRequestSchema = z.object({
 	email: z.email("Kérlek, érvényes email címet adj meg!"),
 	name: z.string().min(1, "Kérlek, add meg a neved!"),
@@ -29,13 +36,15 @@ const baseRequestSchema = z.object({
 const requestSchema = z.discriminatedUnion("attendance", [
 	baseRequestSchema.extend({
 		attendance: z.literal("yes"),
+		transport: z.enum(["true", "false"]),
 		attendees: z
 			.array(attendeeSchema)
 			.min(1, "Kérlek, adj meg legalább egy résztvevőt!"),
 	}),
 	baseRequestSchema.extend({
 		attendance: z.literal("no"),
-		attendees: z.array(attendeeSchema),
+		transport: z.enum(["true", "false", ""]),
+		attendees: z.array(attendeeNoValidationSchema),
 	}),
 ]);
 
@@ -43,7 +52,7 @@ async function validateCaptchaToken(token: string) {
 	try {
 		const [status, errorMessage] = await validateToken(
 			token,
-			String(env.SWETRIX_CAPTCHA_SECRET_KEY),
+			env.SWETRIX_CAPTCHA_SECRET_KEY,
 		);
 
 		if (!status) {

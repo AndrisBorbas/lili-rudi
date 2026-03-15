@@ -10,6 +10,7 @@ export type FormData = {
 	email: string;
 	name: string;
 	attendance: "yes" | "no";
+	transport: "true" | "false";
 	attendees: Attendee[];
 	comment: string;
 };

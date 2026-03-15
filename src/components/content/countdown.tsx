@@ -84,9 +84,9 @@ export function Countdown() {
 	}, [weddingDate]);
 
 	return (
-		<Container variant="center" className="sm:-mt-4">
+		<Container variant="center" className="" bg="secondary">
 			<div className="mx-auto w-full max-w-3xl sm:p-8">
-				<h3 className="text-secondary text-2xl">Visszaszámlálás</h3>
+				<h3 className="text-2xl text-white">Visszaszámlálás</h3>
 
 				{countdown.isComplete ? (
 					<p className="text-foreground mt-4 text-lg">Eljött a nagy nap!</p>
@@ -97,7 +97,7 @@ export function Countdown() {
 						</p>
 						<div className="mt-5 space-y-3" aria-live="polite">
 							<div className="text-center">
-								<p className="text-primary font-elegant text-5xl leading-none sm:text-6xl">
+								<p className="font-elegant text-5xl leading-none text-white sm:text-6xl">
 									<span className="inline-flex min-w-[3.1em] justify-center">
 										<DigitGroup
 											value={countdown.days.toString()}
@@ -110,7 +110,7 @@ export function Countdown() {
 								</p>
 							</div>
 							<div className="text-center">
-								<p className="text-primary font-elegant inline-flex items-center justify-center text-4xl leading-none sm:text-5xl">
+								<p className="font-elegant inline-flex items-center justify-center text-4xl leading-none text-white sm:text-5xl">
 									<DigitGroup value={formattedHours} />
 									<span className="inline-flex w-[0.45em] justify-center">
 										:

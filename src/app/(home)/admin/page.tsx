@@ -95,9 +95,36 @@ const createColumns = ({
 		),
 	},
 	{
+		accessorKey: "data.transport",
+		header: "Transzfer",
+		cell: ({ row }) => {
+			if (row.original.data.attendance === "no") {
+				return <span className="text-muted-foreground">-</span>;
+			}
+
+			return (
+				<span
+					className={
+						row.original.data.transport === "true"
+							? "text-green-600"
+							: "text-red-600"
+					}
+				>
+					{row.original.data.transport === "true"
+						? "✓ Igényel"
+						: "✗ Nem igényel"}
+				</span>
+			);
+		},
+	},
+	{
 		accessorKey: "attendees",
 		header: "Vendégek száma",
 		cell: ({ row }) => {
+			if (row.original.data.attendance === "no") {
+				return <div className="text-muted-foreground">-</div>;
+			}
+
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			const attendees = row.original.data.attendees || [];
 			return <div>{attendees.length}</div>;
@@ -107,6 +134,10 @@ const createColumns = ({
 		id: "attendeeNames",
 		header: "Vendégek nevei",
 		cell: ({ row }) => {
+			if (row.original.data.attendance === "no") {
+				return <div className="text-muted-foreground">-</div>;
+			}
+
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			const attendees = row.original.data.attendees || [];
 			return (
@@ -124,6 +155,10 @@ const createColumns = ({
 		id: "allergies",
 		header: "Allergiák",
 		cell: ({ row }) => {
+			if (row.original.data.attendance === "no") {
+				return <div className="text-muted-foreground">-</div>;
+			}
+
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			const attendees = row.original.data.attendees || [];
 			const withAllergies = attendees.filter((a: Attendee) => a.hasAllergy);
@@ -437,11 +472,18 @@ export default function AdminPage() {
 	const totalNotAttending = responses.filter(
 		(r) => r.data.attendance === "no",
 	).length;
-	const totalGuests = responses.reduce(
-		(sum, r) => sum + (r.data.attendees.length || 0),
-		0,
-	);
+	const totalGuests = responses.reduce((sum, r) => {
+		if (r.data.attendance !== "yes") {
+			return sum;
+		}
+
+		return sum + (r.data.attendees.length || 0);
+	}, 0);
 	const totalKids = responses.reduce((sum, r) => {
+		if (r.data.attendance !== "yes") {
+			return sum;
+		}
+
 		const kidsCount = r.data.attendees.filter((a) => Number(a.age) < 14).length;
 		return sum + (kidsCount || 0);
 	}, 0);

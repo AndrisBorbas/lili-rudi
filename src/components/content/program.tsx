@@ -14,28 +14,24 @@ type ProgramCardProps = {
 function ProgramCard({ time, title, icon, flipped }: ProgramCardProps) {
 	return (
 		<>
-			{flipped && (
-				<div className="mr-6 text-right text-white sm:mr-8">
-					{time && <h4 className="mb-4 text-3xl sm:text-4xl">{time}</h4>}
-					<h3 className="text-2xl sm:text-3xl">{title}</h3>
-				</div>
-			)}
-			<Image
-				src={`/icons1/${icon}`}
-				width={256}
-				height={256}
-				alt={title}
+			<div
 				className={cn(
-					"size-42 brightness-0 invert-100 sm:size-64",
-					flipped ? "" : "ml-auto",
+					"mb-4 flex flex-col sm:mb-8",
+					flipped && "translate-y-1/2",
 				)}
-			/>
-			{!flipped && (
-				<div className="ml-6 text-left text-white sm:ml-8">
-					{time && <h4 className="mb-4 text-3xl sm:text-4xl">{time}</h4>}
-					<h3 className="text-2xl sm:text-3xl">{title}</h3>
+			>
+				<Image
+					src={`/icons1/${icon}`}
+					width={256}
+					height={256}
+					alt={title}
+					className={cn("mx-auto size-36 brightness-0 invert-100 sm:size-52")}
+				/>
+				<div className="-mt-3 text-center text-white sm:-mt-6">
+					{time && <h4 className="font-sans text-2xl sm:text-3xl">{time}</h4>}
+					<h3 className="font-sans text-xl sm:text-2xl">{title}</h3>
 				</div>
-			)}
+			</div>
 		</>
 	);
 }
@@ -47,7 +43,7 @@ export function ProgramLayout() {
 				Menetrend
 			</h2>
 			<div className="relative ml-auto grid grid-cols-2 items-center">
-				<div className="absolute top-0 left-1/2 h-full w-[2px]">
+				<div className="absolute top-0 left-[calc(50%-1px)] h-full w-[2px]">
 					<svg
 						className="h-full w-full"
 						viewBox="0 0 2 100"

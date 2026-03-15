@@ -23,7 +23,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { env } from "@/env";
 import { TRACKING_ID } from "@/lib/track";
 import type { SubmitResponseSuccess } from "@/types/api";
 
@@ -38,12 +37,20 @@ const attendeeSchema = z.object({
 	hasAllergy: z.boolean().optional(),
 });
 
+const attendeeNoValidationSchema = z.object({
+	name: z.string(),
+	age: z.union([z.number(), z.literal("")]),
+	allergy: z.string().optional(),
+	hasAllergy: z.boolean().optional(),
+});
+
 const formSchema = z.discriminatedUnion("attendance", [
 	z.object({
 		email: z.email("Kérlek, érvényes email címet adj meg!"),
 		name: z.string().min(1, "Kérlek, add meg a neved!"),
 		comment: z.string().max(3600, "Maximum 3600 karakter lehet"),
 		attendance: z.literal("yes"),
+		transport: z.enum(["true", "false"]),
 		attendees: z
 			.array(attendeeSchema)
 			.min(1, "Kérlek, adj meg legalább egy résztvevőt!"),
@@ -53,7 +60,10 @@ const formSchema = z.discriminatedUnion("attendance", [
 		name: z.string().min(1, "Kérlek, add meg a neved!"),
 		comment: z.string().max(3600, "Maximum 3600 karakter lehet"),
 		attendance: z.literal("no"),
-		attendees: z.array(attendeeSchema),
+		transport: z.enum(["true", "false"]),
+		// Keep user-entered attendee state intact, but do not block "no" submissions
+		// because hidden attendee rows can contain incomplete values.
+		attendees: z.array(attendeeNoValidationSchema),
 	}),
 ]);
 
@@ -65,6 +75,7 @@ export function ResponseForm({
 		email: string;
 		name: string;
 		attendance: "yes" | "no";
+		transport: "true" | "false";
 		attendees: {
 			name: string;
 			age: number | "";
@@ -85,6 +96,7 @@ export function ResponseForm({
 			email: initialData?.email ?? "",
 			name: initialData?.name ?? "",
 			attendance: initialData?.attendance ?? ("" as "yes" | "no"),
+			transport: initialData?.transport ?? "false",
 			attendees:
 				initialData?.attendees ??
 				([] as {
@@ -107,6 +119,7 @@ export function ResponseForm({
 					)?.value ?? "";
 
 				if (!captchaToken) {
+					console.error("Captcha token is missing");
 					toast.error("Kérlek, erősítsd meg, hogy nem vagy robot.");
 					return;
 				}
@@ -314,6 +327,78 @@ export function ResponseForm({
 						<>
 							<FieldSeparator />
 							<FieldGroup>
+								<form.Field
+									name="transport"
+									validators={{
+										onSubmit: ({ value }) => {
+											// @ts-expect-error: value can be null
+											// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+											if (!value || value === "") {
+												return {
+													message:
+														"Kérlek, válaszd ki, hogy igénybe veszed-e a segítséget!",
+												};
+											}
+											return undefined;
+										},
+									}}
+									children={(field) => {
+										const isInvalid =
+											field.state.meta.isTouched && !field.state.meta.isValid;
+										return (
+											<>
+												<FieldLabel htmlFor={field.name}>
+													Kérsz segítséget a transzferben?
+												</FieldLabel>
+												<RadioGroup
+													name={field.name}
+													value={field.state.value}
+													onValueChange={(value) => {
+														field.handleChange(value as "true" | "false");
+													}}
+												>
+													<Field
+														orientation="horizontal"
+														data-invalid={isInvalid}
+													>
+														<RadioGroupItem
+															value="true"
+															id="transport-yes"
+															aria-invalid={isInvalid}
+														/>
+														<FieldLabel
+															htmlFor="transport-yes"
+															className="font-normal"
+														>
+															Igen, szeretnék segítséget kérni a transzferben.
+														</FieldLabel>
+													</Field>
+													<Field
+														orientation="horizontal"
+														data-invalid={isInvalid}
+													>
+														<RadioGroupItem
+															value="false"
+															id="transport-no"
+															aria-invalid={isInvalid}
+														/>
+														<FieldLabel
+															htmlFor="transport-no"
+															className="font-normal"
+														>
+															Nem, megoldom saját autóval/taxival.
+														</FieldLabel>
+													</Field>
+												</RadioGroup>
+												{isInvalid && (
+													<FieldError errors={field.state.meta.errors} />
+												)}
+											</>
+										);
+									}}
+								/>
+							</FieldGroup>
+							<FieldGroup>
 								<FieldSet className={"@container"}>
 									<FieldLegend>Résztvevők</FieldLegend>
 									<FieldDescription>
@@ -331,6 +416,7 @@ export function ResponseForm({
 													style={{ gridAutoRows: "max-content" }}
 												>
 													{field.state.value.map((_, index) => (
+														// eslint-disable-next-line react-x/no-array-index-key
 														<Card key={`${index}`} className="w-full p-4">
 															<div className="space-y-4">
 																<div className="flex items-start justify-between gap-4">
