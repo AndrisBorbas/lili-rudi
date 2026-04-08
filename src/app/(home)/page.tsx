@@ -19,7 +19,7 @@ export default function HomePage() {
 			<DetailsLayout />
 			<MapLayout />
 			<FormLayout />
-			<Gallery />
+			{/* <Gallery /> */}
 		</>
 	);
 }
