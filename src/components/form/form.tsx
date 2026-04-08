@@ -703,6 +703,7 @@ export function ResponseForm({
 							data-project-id={captchaProjectId}
 							data-response-input-name={captchaInputName}
 							data-api-url="https://succ.andrisborbas.com/backend/v1/captcha"
+							data-lang="hu"
 						/>
 					</FieldSet>
 					<Field orientation="horizontal">

@@ -25,7 +25,9 @@ function ProgramCard({ time, title, icon, flipped }: ProgramCardProps) {
 					width={256}
 					height={256}
 					alt={title}
-					className={cn("mx-auto size-36 brightness-0 invert-100 sm:size-52")}
+					className={cn(
+						"mx-auto mb-1 size-24 brightness-0 invert-100 sm:mb-2 sm:size-36",
+					)}
 				/>
 				<div className="-mt-3 text-center text-white sm:-mt-6">
 					{time && <h4 className="font-sans text-2xl sm:text-3xl">{time}</h4>}

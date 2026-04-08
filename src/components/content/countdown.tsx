@@ -39,7 +39,14 @@ function formatTwoDigits(value: number) {
 }
 
 function DigitSlot({ digit }: { digit: string }) {
-	return <span className="inline-flex w-[1.5ch] justify-center">{digit}</span>;
+	return (
+		<span
+			className="inline-flex w-[1.5ch] justify-center"
+			suppressHydrationWarning
+		>
+			{digit}
+		</span>
+	);
 }
 
 function DigitGroup({

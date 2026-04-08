@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 export function Footer() {
 	return (
-		<footer className="glass glass-shadow mt-8 w-full py-4">
+		<footer className="glass glass-shadow w-full py-4">
 			<div className="text-muted-foreground container mx-auto flex flex-col gap-4 text-sm md:flex-row md:justify-between">
 				{/* Left side - Legal Links */}
 				<div className="flex flex-col flex-wrap gap-4 md:flex-row">
