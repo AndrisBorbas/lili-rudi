@@ -20,7 +20,7 @@ const NAV_ITEMS = [
 	{ label: "Részletek", href: "/#reszletek" },
 	{ label: "Helyszín", href: "/#helyszin" },
 	{ label: "Visszzajelzés", href: "/#visszajelzes" },
-	{ label: "Galéria", href: "/#galeria" },
+	// { label: "Galéria", href: "/#galeria" },
 ];
 
 export function Navbar() {
