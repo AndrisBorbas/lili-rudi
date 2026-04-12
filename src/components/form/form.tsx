@@ -24,14 +24,39 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { TRACKING_ID } from "@/lib/track";
-import type { SubmitResponseSuccess } from "@/types/api";
+import type {
+	Attendee,
+	AttendeeAgeCategory,
+	SubmitResponseSuccess,
+} from "@/types/api";
+
+const attendeeAgeSchema = z.union([
+	z.literal("under_3"),
+	z.literal("under_14"),
+	z.literal(""),
+]);
+
+function normalizeAttendeeAge(age: Attendee["age"]): AttendeeAgeCategory | "" {
+	if (age === "under_3" || age === "under_14") {
+		return age;
+	}
+
+	if (typeof age === "number") {
+		if (age < 3) {
+			return "under_3";
+		}
+
+		if (age < 14) {
+			return "under_14";
+		}
+	}
+
+	return "";
+}
 
 const attendeeSchema = z.object({
 	name: z.string().min(1, "Kérlek, adj meg egy nevet!"),
-	age: z
-		.number({ message: "Kérlek, érvényes számot adj meg!" })
-		.min(0, "Az életkor nem lehet negatív!")
-		.max(130, "Kérlek, ésszerű életkort adj meg!"),
+	age: attendeeAgeSchema,
 
 	allergy: z.string().optional(),
 	hasAllergy: z.boolean().optional(),
@@ -39,7 +64,7 @@ const attendeeSchema = z.object({
 
 const attendeeNoValidationSchema = z.object({
 	name: z.string(),
-	age: z.union([z.number(), z.literal("")]),
+	age: attendeeAgeSchema,
 	allergy: z.string().optional(),
 	hasAllergy: z.boolean().optional(),
 });
@@ -78,7 +103,7 @@ export function ResponseForm({
 		transport: "true" | "false";
 		attendees: {
 			name: string;
-			age: number | "";
+			age: Attendee["age"];
 			allergy?: string;
 			hasAllergy?: boolean;
 		}[];
@@ -98,10 +123,13 @@ export function ResponseForm({
 			attendance: initialData?.attendance ?? ("" as "yes" | "no"),
 			transport: initialData?.transport ?? "false",
 			attendees:
-				initialData?.attendees ??
+				initialData?.attendees.map((attendee) => ({
+					...attendee,
+					age: normalizeAttendeeAge(attendee.age),
+				})) ??
 				([] as {
 					name: string;
-					age: number | "";
+					age: AttendeeAgeCategory | "";
 					allergy?: string;
 					hasAllergy?: boolean;
 				}[]),
@@ -462,29 +490,58 @@ export function ResponseForm({
 																				const subInvalid =
 																					subField.state.meta.isTouched &&
 																					!subField.state.meta.isValid;
+																				const ageValue = normalizeAttendeeAge(
+																					subField.state.value,
+																				);
 																				return (
 																					<Field data-invalid={subInvalid}>
-																						<FieldLabel htmlFor={subField.name}>
-																							Életkor
-																						</FieldLabel>
-																						<Input
-																							id={subField.name}
+																						<FieldLabel>Korcsoport</FieldLabel>
+																						<RadioGroup
 																							name={subField.name}
-																							type="number"
-																							value={subField.state.value}
-																							onBlur={subField.handleBlur}
-																							onChange={(e) => {
+																							value={ageValue}
+																							onValueChange={(value) => {
 																								subField.handleChange(
-																									e.target.value === ""
-																										? ""
-																										: Number(e.target.value),
+																									value as AttendeeAgeCategory,
 																								);
 																							}}
-																							aria-invalid={subInvalid}
-																							placeholder="Életkor"
-																							min="0"
-																							max="130"
-																						/>
+																						>
+																							<Field orientation="horizontal">
+																								<RadioGroupItem
+																									value="under_3"
+																									id={`${subField.name}-under-3`}
+																								/>
+																								<FieldLabel
+																									htmlFor={`${subField.name}-under-3`}
+																									className="font-normal"
+																								>
+																									3 év alatt
+																								</FieldLabel>
+																							</Field>
+																							<Field orientation="horizontal">
+																								<RadioGroupItem
+																									value="under_14"
+																									id={`${subField.name}-under-14`}
+																								/>
+																								<FieldLabel
+																									htmlFor={`${subField.name}-under-14`}
+																									className="font-normal"
+																								>
+																									3-14 év
+																								</FieldLabel>
+																							</Field>
+																						</RadioGroup>
+																						<Button
+																							type="button"
+																							variant="secondary"
+																							size="sm"
+																							disabled={ageValue === ""}
+																							onClick={() => {
+																								subField.handleChange("");
+																							}}
+																							className="h-8 px-0"
+																						>
+																							Nem gyerek
+																						</Button>
 																						{subInvalid && (
 																							<FieldError
 																								errors={
@@ -631,10 +688,10 @@ export function ResponseForm({
 																			/>
 																		</div>
 																		<div className="flex-1 space-y-2">
-																			<div>Életkor</div>
+																			<div>Korcsoport</div>
 																			<Input
 																				disabled
-																				placeholder="Életkor"
+																				placeholder="3 év alatt / 3-14 év"
 																				className="w-full"
 																			/>
 																		</div>

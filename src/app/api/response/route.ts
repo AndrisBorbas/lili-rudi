@@ -9,19 +9,23 @@ import { storeResponse } from "@/lib/r2";
 import { createMagicLinkToken } from "@/lib/tokens";
 import type { ApiErrorResponse, SubmitResponseSuccess } from "@/types/api";
 
+const attendeeAgeSchema = z.union([
+	z.literal("under_3"),
+	z.literal("under_14"),
+	z.literal(""),
+	z.number().min(0).max(130),
+]);
+
 const attendeeSchema = z.object({
 	name: z.string().min(1, "Kérlek, adj meg egy nevet!"),
-	age: z
-		.number({ message: "Kérlek, érvényes számot adj meg!" })
-		.min(0, "Az életkor nem lehet negatív!")
-		.max(130, "Kérlek, ésszerű életkort adj meg!"),
+	age: attendeeAgeSchema,
 	allergy: z.string().optional(),
 	hasAllergy: z.boolean().optional(),
 });
 
 const attendeeNoValidationSchema = z.object({
 	name: z.string(),
-	age: z.union([z.number(), z.literal("")]),
+	age: attendeeAgeSchema,
 	allergy: z.string().optional(),
 	hasAllergy: z.boolean().optional(),
 });

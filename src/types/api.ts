@@ -1,7 +1,10 @@
 // Form data types
+export type AttendeeAgeCategory = "under_3" | "under_14";
+export type AttendeeAge = AttendeeAgeCategory | "" | number;
+
 export type Attendee = {
 	name: string;
-	age: number | "";
+	age: AttendeeAge;
 	allergy?: string;
 	hasAllergy?: boolean;
 };

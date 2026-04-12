@@ -39,6 +39,34 @@ type ColumnsProps = {
 	onCopyLink: (email: string) => void;
 };
 
+function formatAttendeeAge(age: Attendee["age"]) {
+	if (age === "under_3") {
+		return "3 év alatt";
+	}
+
+	if (age === "under_14") {
+		return "3-14 év";
+	}
+
+	if (typeof age === "number") {
+		return `${age} év`;
+	}
+
+	return "?";
+}
+
+function isChildAttendee(age: Attendee["age"]) {
+	if (age === "under_3" || age === "under_14") {
+		return true;
+	}
+
+	if (typeof age === "number") {
+		return age < 14;
+	}
+
+	return false;
+}
+
 const createColumns = ({
 	onDelete,
 	onResendEmail,
@@ -141,15 +169,19 @@ const createColumns = ({
 			// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 			const attendees = row.original.data.attendees || [];
 			return (
-				<div className="max-w-xs">
-					{attendees.map((a: Attendee, i: number) => (
-						<div key={i} className="text-sm">
-							{a.name} ({a.age || "?"})
+				<div className="">
+					{attendees.map((a: Attendee) => (
+						<div
+							key={`${a.name}-${String(a.age)}-${a.allergy ?? ""}`}
+							className="text-sm"
+						>
+							{a.name} ({formatAttendeeAge(a.age)})
 						</div>
 					))}
 				</div>
 			);
 		},
+		minSize: 200,
 	},
 	{
 		id: "allergies",
@@ -165,15 +197,19 @@ const createColumns = ({
 			if (withAllergies.length === 0)
 				return <div className="text-muted-foreground">-</div>;
 			return (
-				<div className="max-w-xs">
-					{withAllergies.map((a: Attendee, i: number) => (
-						<div key={i} className="text-sm">
+				<div className="">
+					{withAllergies.map((a: Attendee) => (
+						<div
+							key={`${a.name}-${a.allergy ?? ""}-${String(a.age)}`}
+							className="text-sm"
+						>
 							{a.name}: {a.allergy}
 						</div>
 					))}
 				</div>
 			);
 		},
+		minSize: 200,
 	},
 	{
 		accessorKey: "data.comment",
@@ -187,6 +223,8 @@ const createColumns = ({
 				</div>
 			);
 		},
+		minSize: 200,
+		maxSize: 400,
 	},
 	{
 		accessorKey: "updatedAt",
@@ -268,7 +306,7 @@ export default function AdminPage() {
 		password: string;
 	} | null>(null);
 	const [responses, setResponses] = useState<ResponseWithMetadata[]>([]);
-	const [loading, setLoading] = useState(false);
+	const [_loading, setLoading] = useState(false);
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const [globalFilter, setGlobalFilter] = useState("");
 
@@ -484,7 +522,9 @@ export default function AdminPage() {
 			return sum;
 		}
 
-		const kidsCount = r.data.attendees.filter((a) => Number(a.age) < 14).length;
+		const kidsCount = r.data.attendees.filter((a) =>
+			isChildAttendee(a.age),
+		).length;
 		return sum + (kidsCount || 0);
 	}, 0);
 
@@ -546,7 +586,13 @@ export default function AdminPage() {
 							{table.getHeaderGroups().map((headerGroup) => (
 								<TableRow key={headerGroup.id}>
 									{headerGroup.headers.map((header) => (
-										<TableHead key={header.id}>
+										<TableHead
+											key={header.id}
+											style={{
+												width: `${header.getSize()}px`,
+												minWidth: `${header.column.columnDef.minSize ?? 0}px`,
+											}}
+										>
 											{header.isPlaceholder
 												? null
 												: flexRender(
@@ -572,7 +618,13 @@ export default function AdminPage() {
 								table.getRowModel().rows.map((row) => (
 									<TableRow key={row.id}>
 										{row.getVisibleCells().map((cell) => (
-											<TableCell key={cell.id}>
+											<TableCell
+												key={cell.id}
+												style={{
+													width: `${cell.column.getSize()}px`,
+													minWidth: `${cell.column.columnDef.minSize ?? 0}px`,
+												}}
+											>
 												{flexRender(
 													cell.column.columnDef.cell,
 													cell.getContext(),
