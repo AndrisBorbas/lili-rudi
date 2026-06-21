@@ -5,6 +5,7 @@ import { useForm, useStore } from "@tanstack/react-form";
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { trackError } from "swetrix";
 import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { TRACKING_ID } from "@/lib/track";
 import type {
+	ApiErrorResponse,
 	Attendee,
 	AttendeeAgeCategory,
 	SubmitResponseSuccess,
@@ -164,16 +166,40 @@ export function ResponseForm({
 					}),
 				});
 
-				const data = (await response.json()) as SubmitResponseSuccess;
+				const data = (await response.json()) as
+					| SubmitResponseSuccess
+					| ApiErrorResponse;
 
 				if (response.ok) {
 					toast.success(data.message);
 				} else {
 					toast.error(data.message);
+					trackError({
+						name: "FormResponseError",
+						message: `${data.message}${"errors" in data ? " | " + JSON.stringify(data.errors) : ""}`,
+					});
 				}
 			} catch (error) {
 				console.error("Error submitting form:", error);
 				toast.error("Hiba történt a válasz küldése során.");
+
+				if (error instanceof Error) {
+					trackError({
+						name: "FormSubmissionError",
+						message: error.message,
+						stackTrace: error.stack,
+					});
+				} else if (typeof error === "string") {
+					trackError({
+						name: "FormSubmissionError",
+						message: error,
+					});
+				} else {
+					trackError({
+						name: "FormSubmissionError",
+						message: "An unknown error occurred during form submission.",
+					});
+				}
 			} finally {
 				setIsSubmitting(false);
 			}
