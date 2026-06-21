@@ -57,6 +57,7 @@ async function validateCaptchaToken(token: string) {
 		const [status, errorMessage] = await validateToken(
 			token,
 			env.SWETRIX_CAPTCHA_SECRET_KEY,
+			"https://analytics.andrisborbas.com/backend/v1/captcha",
 		);
 
 		if (!status) {

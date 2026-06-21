@@ -1,8 +1,8 @@
 /* eslint-disable react/no-children-prop */
 
+import { loadCaptcha } from "@swetrix/captcha";
 import { useForm, useStore } from "@tanstack/react-form";
 import { Plus, Trash2 } from "lucide-react";
-import Script from "next/script";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -112,6 +112,7 @@ export function ResponseForm({
 	editToken?: string;
 } = {}) {
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [isCaptchaMounted, setIsCaptchaMounted] = useState(false);
 	const captchaContainerRef = useRef<HTMLDivElement>(null);
 	const captchaInputName = "swetrix-captcha-response";
 	const captchaProjectId = TRACKING_ID;
@@ -203,18 +204,30 @@ export function ResponseForm({
 		}
 	}, [attendance, form]);
 
+	useEffect(() => {
+		setIsCaptchaMounted(true);
+	}, []);
+
+	useEffect(() => {
+		if (!isCaptchaMounted) {
+			return;
+		}
+
+		loadCaptcha();
+	}, [isCaptchaMounted]);
+
 	const showAttendees = attendance === "yes";
 
 	return (
 		<div className="w-full">
-			<Script
+			{/* <Script
 				src="https://cdn.swetrixcaptcha.com/captcha-loader.js"
 				onLoad={() => {
 					// @ts-expect-error: swetrixCaptchaForceLoad is defined in the loaded script
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 					window.swetrixCaptchaForceLoad();
 				}}
-			/>
+			/> */}
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
@@ -752,16 +765,20 @@ export function ResponseForm({
 					</FieldSet>
 					<FieldSet className="gap-3">
 						<FieldLabel htmlFor="captcha">Biztonsági ellenőrzés</FieldLabel>
-						<div
-							ref={captchaContainerRef}
-							id="captcha"
-							className="swecaptcha h-[66px] w-[302px]"
-							data-theme="light"
-							data-project-id={captchaProjectId}
-							data-response-input-name={captchaInputName}
-							data-api-url="https://succ.andrisborbas.com/backend/v1/captcha"
-							data-lang="hu"
-						/>
+						{isCaptchaMounted ? (
+							<div
+								ref={captchaContainerRef}
+								id="captcha"
+								className="swecaptcha h-16.5 w-75.5"
+								data-theme="light"
+								data-project-id={captchaProjectId}
+								data-response-input-name={captchaInputName}
+								data-api-url="https://succ.andrisborbas.com/backend/v1/captcha"
+								data-lang="hu"
+							/>
+						) : (
+							<div id="captcha" className="h-16.5 w-75.5" aria-hidden="true" />
+						)}
 					</FieldSet>
 					<Field orientation="horizontal">
 						<Button type="submit" disabled={isSubmitting} className="ml-auto">

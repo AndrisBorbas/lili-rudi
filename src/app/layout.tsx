@@ -1,4 +1,5 @@
 import "@/styles/globals.css";
+import "@swetrix/captcha";
 
 import { type Metadata } from "next";
 import {
