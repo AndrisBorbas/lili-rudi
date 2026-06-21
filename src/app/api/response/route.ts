@@ -34,7 +34,7 @@ const baseRequestSchema = z.object({
 	email: z.email("Kérlek, érvényes email címet adj meg!"),
 	name: z.string().min(1, "Kérlek, add meg a neved!"),
 	comment: z.string().max(3600, "Maximum 3600 karakter lehet"),
-	// captchaToken: z.string().min(1, "Kérlek, erősítsd meg, hogy nem vagy robot."),
+	captchaToken: z.string().min(1, "Kérlek, erősítsd meg, hogy nem vagy robot."),
 });
 
 const requestSchema = z.discriminatedUnion("attendance", [
@@ -85,24 +85,21 @@ export async function POST(
 		// Validate the request body
 		const validatedData = requestSchema.parse(body);
 
-		// const captchaResult = await validateCaptchaToken(
-		// 	validatedData.captchaToken,
-		// );
-		// if (!captchaResult.ok) {
-		// 	return NextResponse.json(
-		// 		{
-		// 			success: false,
-		// 			message: "A CAPTCHA ellenőrzése nem sikerült",
-		// 			errors: captchaResult.message,
-		// 		},
-		// 		{ status: 400 },
-		// 	);
-		// }
+		const captchaResult = await validateCaptchaToken(
+			validatedData.captchaToken,
+		);
+		if (!captchaResult.ok) {
+			return NextResponse.json(
+				{
+					success: false,
+					message: "A CAPTCHA ellenőrzése nem sikerült",
+					errors: captchaResult.message,
+				},
+				{ status: 400 },
+			);
+		}
 
-		const {
-			//  captchaToken: _captchaToken,
-			...dataToStore
-		} = validatedData;
+		const { captchaToken: _captchaToken, ...dataToStore } = validatedData;
 
 		// Create a magic link token
 		const token = await createMagicLinkToken(validatedData.email);
