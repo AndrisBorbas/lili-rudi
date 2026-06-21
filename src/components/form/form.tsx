@@ -112,9 +112,9 @@ export function ResponseForm({
 	editToken?: string;
 } = {}) {
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const captchaContainerRef = useRef<HTMLDivElement>(null);
-	const captchaInputName = "swetrix-captcha-response";
-	const captchaProjectId = TRACKING_ID;
+	// const captchaContainerRef = useRef<HTMLDivElement>(null);
+	// const captchaInputName = "swetrix-captcha-response";
+	// const captchaProjectId = TRACKING_ID;
 
 	const form = useForm({
 		defaultValues: {
@@ -141,16 +141,16 @@ export function ResponseForm({
 		onSubmit: async ({ value }) => {
 			setIsSubmitting(true);
 			try {
-				const captchaToken =
-					captchaContainerRef.current?.querySelector<HTMLInputElement>(
-						`input[name="${captchaInputName}"]`,
-					)?.value ?? "";
+				// const captchaToken =
+				// 	captchaContainerRef.current?.querySelector<HTMLInputElement>(
+				// 		`input[name="${captchaInputName}"]`,
+				// 	)?.value ?? "";
 
-				if (!captchaToken) {
-					console.error("Captcha token is missing");
-					toast.error("Kérlek, erősítsd meg, hogy nem vagy robot.");
-					return;
-				}
+				// if (!captchaToken) {
+				// 	console.error("Captcha token is missing");
+				// 	toast.error("Kérlek, erősítsd meg, hogy nem vagy robot.");
+				// 	return;
+				// }
 
 				const response = await fetch("/api/response", {
 					method: "POST",
@@ -159,7 +159,7 @@ export function ResponseForm({
 					},
 					body: JSON.stringify({
 						...value,
-						captchaToken,
+						// captchaToken,
 					}),
 				});
 
@@ -207,14 +207,14 @@ export function ResponseForm({
 
 	return (
 		<div className="w-full">
-			<Script
+			{/* <Script
 				src="https://cdn.swetrixcaptcha.com/captcha-loader.js"
 				onLoad={() => {
 					// @ts-expect-error: swetrixCaptchaForceLoad is defined in the loaded script
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 					window.swetrixCaptchaForceLoad();
 				}}
-			/>
+			/> */}
 			<form
 				onSubmit={(e) => {
 					e.preventDefault();
@@ -750,7 +750,7 @@ export function ResponseForm({
 							}}
 						/>
 					</FieldSet>
-					<FieldSet className="gap-3">
+					{/* <FieldSet className="gap-3">
 						<FieldLabel htmlFor="captcha">Biztonsági ellenőrzés</FieldLabel>
 						<div
 							ref={captchaContainerRef}
@@ -762,7 +762,7 @@ export function ResponseForm({
 							data-api-url="https://succ.andrisborbas.com/backend/v1/captcha"
 							data-lang="hu"
 						/>
-					</FieldSet>
+					</FieldSet> */}
 					<Field orientation="horizontal">
 						<Button type="submit" disabled={isSubmitting} className="ml-auto">
 							{isSubmitting ? "Küldés..." : "Beküldés"}
